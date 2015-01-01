@@ -3,7 +3,7 @@
 var nv = window.nv || {};
 
 
-nv.version = '1.1.181';
+nv.version = '1.1.182';
 nv.dev = true //set false when in production
 
 window.nv = nv;
@@ -7562,7 +7562,7 @@ nv.models.mtMultiBar = function() {
     , yRange
     , groupSpacing = 0.1
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
-    , widthOfBar
+    , barWidth
     ;
 
   //============================================================
@@ -7749,7 +7749,7 @@ nv.models.mtMultiBar = function() {
             var xPosition = stacked ? 0 : (j * x.rangeBand() / data.length );
             var yPosition = y0(stacked ? d.y0 : 0);
             var heightOfBar = 0;
-            var widthOfBar = widthOfBar || (x.rangeBand() / (stacked ? 1 : data.length));
+            var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
 
             return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
           })
@@ -7831,7 +7831,7 @@ nv.models.mtMultiBar = function() {
               var yPosition = y((stacked ? d.y1 : 0));
               var heightOfBar = Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
 
-              var widthOfBar = widthOfBar || (x.rangeBand() / (stacked ? 1 : data.length));
+              var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
               return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
             });
       else
@@ -7848,7 +7848,7 @@ nv.models.mtMultiBar = function() {
                           y(0) - 1 :
                           y(getY(d,i)) || 0;
 
-              var widthOfBar = widthOfBar || (x.rangeBand() / (stacked ? 1 : data.length));
+              var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
               return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
             });
 
@@ -7941,9 +7941,9 @@ nv.models.mtMultiBar = function() {
     return chart;
   };
 
-  chart.widthOfBar = function(_) {
-    if (!arguments.length) return widthOfBar;
-    widthOfBar = _;
+  chart.barWidth = function(_) {
+    if (!arguments.length) return barWidth;
+    barWidth = _;
     return chart;
   };
 
@@ -8414,7 +8414,7 @@ nv.models.mtMultiBarChart = function() {
   chart.yAxis = yAxis;
 
   d3.rebind(chart, multibar, 'x', 'y', 'xDomain', 'yDomain', 'xRange', 'yRange', 'forceX', 'forceY', 'clipEdge',
-   'id', 'stacked', 'stackOffset', 'delay', 'barColor','groupSpacing');
+   'id', 'stacked', 'stackOffset', 'delay', 'barColor','groupSpacing' ,'barWidth');
 
   chart.options = nv.utils.optionsFunc.bind(chart);
   

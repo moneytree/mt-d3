@@ -111,7 +111,7 @@ nv.models.mtMultiBar = function() {
             });
 
       x   .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x }))
-          .rangeBands(xRange || [0, availableWidth], groupSpacing);
+          .rangeBands(xRange || [(availableWidth/12), availableWidth - (availableWidth/12)], groupSpacing);
 
       //y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y1 : 0) }).concat(forceY)))
       y   .domain((function() {

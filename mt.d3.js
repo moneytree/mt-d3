@@ -3,7 +3,7 @@
 var nv = window.nv || {};
 
 
-nv.version = '1.1.18';
+nv.version = '1.1.181';
 nv.dev = true //set false when in production
 
 window.nv = nv;
@@ -7562,6 +7562,7 @@ nv.models.mtMultiBar = function() {
     , yRange
     , groupSpacing = 0.1
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
+    , widthOfBar
     ;
 
   //============================================================
@@ -7578,6 +7579,18 @@ nv.models.mtMultiBar = function() {
 
 
   function chart(selection) {
+    // Returns path data for a rectangle with rounded right corners.
+    // The top-left corner is ⟨x,y⟩.
+    function roundedTopRectangle(x, y, width, height, radius) {
+      return "M" + x + "," + (y + (radius))
+           + "a" + -radius + "," + -radius + " 0 0 1 " + radius + "," + -radius
+           + "h" + (width - 2*radius)
+           + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
+           + "v" + (height - radius)
+           + "h" + (-width)
+           + "z";
+    }
+
     selection.each(function(data) {
       var availableWidth = width - margin.left - margin.right,
           availableHeight = height - margin.top - margin.bottom,
@@ -7731,26 +7744,14 @@ nv.models.mtMultiBar = function() {
 
       bars.exit().remove();
 
-      // Returns path data for a rectangle with rounded right corners.
-      // The top-left corner is ⟨x,y⟩.
-      function rightRoundedRect(x, y, width, height, radius) {
-        return "M" + x + "," + (y + (radius))
-             + "a" + -radius + "," + -radius + " 0 0 1 " + radius + "," + -radius
-             + "h" + (width - 2*radius)
-             + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
-             + "v" + (height - radius)
-             + "h" + (-width)
-             + "z";
-      }
-
       var barsEnter = bars.enter().append('path')
           .attr('d', function(d,i,j) {
             var xPosition = stacked ? 0 : (j * x.rangeBand() / data.length );
             var yPosition = y0(stacked ? d.y0 : 0);
             var heightOfBar = 0;
-            var widthOfBar = x.rangeBand() / (stacked ? 1 : data.length);
+            var widthOfBar = widthOfBar || (x.rangeBand() / (stacked ? 1 : data.length));
 
-            return rightRoundedRect(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
+            return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
           })
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
           .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
@@ -7830,8 +7831,8 @@ nv.models.mtMultiBar = function() {
               var yPosition = y((stacked ? d.y1 : 0));
               var heightOfBar = Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
 
-              var widthOfBar = x.rangeBand() / (stacked ? 1 : data.length);
-              return rightRoundedRect(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
+              var widthOfBar = widthOfBar || (x.rangeBand() / (stacked ? 1 : data.length));
+              return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
             });
       else
           bars.transition()
@@ -7847,8 +7848,8 @@ nv.models.mtMultiBar = function() {
                           y(0) - 1 :
                           y(getY(d,i)) || 0;
 
-              var widthOfBar = x.rangeBand() / (stacked ? 1 : data.length);
-              return rightRoundedRect(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
+              var widthOfBar = widthOfBar || (x.rangeBand() / (stacked ? 1 : data.length));
+              return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
             });
 
 
@@ -7937,6 +7938,12 @@ nv.models.mtMultiBar = function() {
   chart.yRange = function(_) {
     if (!arguments.length) return yRange;
     yRange = _;
+    return chart;
+  };
+
+  chart.widthOfBar = function(_) {
+    if (!arguments.length) return widthOfBar;
+    widthOfBar = _;
     return chart;
   };
 

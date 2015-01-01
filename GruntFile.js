@@ -50,7 +50,7 @@ module.exports = function(grunt) {
                      'src/models/stackedAreaChart.js',
                      'src/outro.js'
                      ],
-                dest: 'mt.nv.d3.js'
+                dest: 'mt.d3.js'
             }
         },
         uglify: {

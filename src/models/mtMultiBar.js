@@ -114,7 +114,16 @@ nv.models.mtMultiBar = function() {
           .rangeBands(xRange || [0, availableWidth], groupSpacing);
 
       //y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y1 : 0) }).concat(forceY)))
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y }).concat(forceY)))
+      y   .domain((function() {
+              var minAndMax = d3.extent(
+              d3.merge(seriesData).map(function(d) { 
+                  return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y
+                }).concat(forceY)
+              )
+              minAndMax[1] *= 1.4; // This is to help keep a gap on the top of the graph
+              return minAndMax;
+            })()
+          )
           .range(yRange || [availableHeight, 0]);
 
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point

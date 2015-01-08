@@ -81,14 +81,14 @@ module.exports = function(grunt) {
         copy: {
           css: {
             files: [
-              { src: 'src/nv.d3.css', dest: 'nv.d3.css' }
+              { src: 'src/mt.d3.css', dest: 'mt.d3.css' }
             ]
           }
         },
         cssmin: {
           dist: {
             files: {
-              'nv.d3.min.css' : ['nv.d3.css']
+              'mt.d3.min.css' : ['mt.d3.css']
             }
           }
         }

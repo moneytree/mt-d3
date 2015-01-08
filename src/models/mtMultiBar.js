@@ -50,7 +50,16 @@ nv.models.mtMultiBar = function() {
 
 
   function chart(selection) {
-    // Returns path data for a rectangle with rounded right corners.
+    function roundedBars(x, y, width, height, radius, value) {
+      if( value < 0 ) {
+        return roundedBottomRectangle(x, y, width, height, radius)
+      } else {
+        return roundedTopRectangle(x, y, width, height, radius)
+      }
+    }
+
+    // Returns path data for a rectangle with rounded top corners.
+    // This is used for positive values
     // The top-left corner is ⟨x,y⟩.
     function roundedTopRectangle(x, y, width, height, radius) {
       return "M" + x + "," + (y + (radius))
@@ -59,6 +68,19 @@ nv.models.mtMultiBar = function() {
            + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
            + "v" + (height - radius)
            + "h" + (-width)
+           + "z";
+    }
+
+    // Returns path data for a rectangle with rounded bottom corners.
+    // This is used for negative values
+    function roundedBottomRectangle(x, y, width, height, radius) {
+      return "M" + x + "," + y
+           + "h" + (width)
+           + "v" + (height - radius)
+           + "a" + -radius + "," + -radius + " 0 0 1 " + -radius + "," + radius
+           + "h" + -(width - 2*radius)
+           + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + -radius
+           + "v" + -(height - radius)
            + "z";
     }
 
@@ -222,7 +244,7 @@ nv.models.mtMultiBar = function() {
             var heightOfBar = 0;
             var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
 
-            return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
+            return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, d.y);
           })
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
           .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
@@ -303,7 +325,7 @@ nv.models.mtMultiBar = function() {
               var heightOfBar = Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
 
               var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
-              return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
+              return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, d.y);
             });
       else
           bars.transition()
@@ -320,7 +342,7 @@ nv.models.mtMultiBar = function() {
                           y(getY(d,i)) || 0;
 
               var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
-              return roundedTopRectangle(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2)
+              return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, d.y);
             });
 
 

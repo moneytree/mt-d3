@@ -240,7 +240,7 @@ nv.models.mtMultiBar = function() {
 
       var barsEnter = bars.enter().append('path')
           .attr('d', function(d,i,j) {
-            var xPosition = stacked ? 0 : (j * x.rangeBand() / data.length );
+            var xPosition = barWidth/2;
             var yPosition = y0(stacked ? d.y0 : 0);
             var heightOfBar = 0;
             var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
@@ -321,7 +321,7 @@ nv.models.mtMultiBar = function() {
                   return i * delay / data[0].values.length;
             })
             .attr('d', function(d,i,j) {
-              var xPosition = stacked ? 0 : (d.series * x.rangeBand() / data.length );
+              var xPosition = barWidth/2;
               var yPosition = y((stacked ? d.y1 : 0));
               var heightOfBar = Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
 
@@ -334,7 +334,7 @@ nv.models.mtMultiBar = function() {
                 return i * delay/ data[0].values.length;
             })
             .attr('d', function(d,i,j) {
-              var xPosition = stacked ? 0 : (j * x.rangeBand() / data.length );
+              var xPosition = barWidth/2;
               var heightOfBar = Math.max(Math.abs(y(getY(d,i)) - y(0)),1) || 0;
               var yPosition = getY(d,i) < 0 ?
                           y(0) :

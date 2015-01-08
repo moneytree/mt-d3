@@ -155,6 +155,7 @@ nv.models.mtMultiBar = function() {
                   return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y
                 }).concat(forceY)
               )
+              minAndMax[0] *= 1.4; // This is to help keep a gap on the top of the graph
               minAndMax[1] *= 1.4; // This is to help keep a gap on the top of the graph
               return minAndMax;
             })()

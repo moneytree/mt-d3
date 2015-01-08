@@ -1,13 +1,6 @@
 {
   "name": "mt-d3",
-  "version": "1.1.190",
-  "homepage": "http://www.nvd3.org",
-  "authors": [
-    "Bob Monteverde",
-    "Tyler Wolf",
-    "Robin Hu",
-    "Frank Shao"
-  ],
+  "version": "1.1.191",
   "description": "nvd3 re-purposed for Moneytree",
   "main": ["mt.d3.js", "mt.d3.css"],
   "keywords": [
@@ -16,7 +9,6 @@
     "svg",
     "charts"
   ],
-  "license": "Apache License, v2.0",
   "dependencies": {
     "d3": "~3.3.13"
   },

@@ -137,6 +137,17 @@ nv.models.mtMultiBar = function() {
       //------------------------------------------------------------
       // Setup Scales
 
+      // If there are negative numbers and positive numbers, we will center the 0 line to make it look better
+      var verticallyCenterZero = function(minAndMaxArray) {
+        var min = Math.abs(minAndMaxArray[0])
+        var max = Math.abs(minAndMaxArray[1])
+        if( max != 0 && min > max ) {
+          minAndMaxArray[1] = -minAndMaxArray[0]
+        } else if ( min != 0 && max > min ) {
+          minAndMaxArray[0] = -minAndMaxArray[1]
+        }
+      }
+
       // remap and flatten the data for use in calculating the scales' domains
       var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
             data.map(function(d) {
@@ -148,13 +159,14 @@ nv.models.mtMultiBar = function() {
       x   .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x }))
           .rangeBands(xRange || [(availableWidth/12), availableWidth - (availableWidth/12)], groupSpacing);
 
-      //y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y1 : 0) }).concat(forceY)))
       y   .domain((function() {
               var minAndMax = d3.extent(
               d3.merge(seriesData).map(function(d) { 
                   return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y
                 }).concat(forceY)
               )
+
+              verticallyCenterZero(minAndMax); // This will center the 0 axis when both postive and negative exist
               minAndMax[0] *= 1.4; // This is to help keep a gap on the top of the graph
               minAndMax[1] *= 1.4; // This is to help keep a gap on the top of the graph
               return minAndMax;
@@ -232,6 +244,29 @@ nv.models.mtMultiBar = function() {
           .style('stroke-opacity', 1)
           .style('fill-opacity', .75);
 
+      var barsActiveState = groups.selectAll('rect.nv-active-bar')
+        .data(function(d) { return d.values });
+
+      barsActiveState.exit().remove();
+
+      var barsActiveStateEnter = barsActiveState.enter().append('rect')
+          .attr('class', function(d,i) { return "nv-active-bar month-number-"+d.x })
+          .attr('x', function(d,i,j) { return 0 - barWidth })
+          .attr('y', 0)
+          .attr('height', height )
+          .attr('width', function() {
+            var width = barWidth*4;
+            return width
+
+          })
+          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
+          .style('fill', '#DFDFDF')
+          .style('stroke', '#DFDFDF')
+          .style('opacity', '0');
+
+      barsActiveState
+          .transition()
+          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
 
       var bars = groups.selectAll('path.nv-bar')
           .data(function(d) { return (hideable && !data.length) ? hideable.values : d.values });
@@ -245,7 +280,7 @@ nv.models.mtMultiBar = function() {
             var heightOfBar = 0;
             var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
 
-            return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, d.y);
+            return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
           })
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
           .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
@@ -326,7 +361,7 @@ nv.models.mtMultiBar = function() {
               var heightOfBar = Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
 
               var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
-              return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, d.y);
+              return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
             });
       else
           bars.transition()
@@ -343,7 +378,7 @@ nv.models.mtMultiBar = function() {
                           y(getY(d,i)) || 0;
 
               var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
-              return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, d.y);
+              return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
             });
 
 

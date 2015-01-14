@@ -241,6 +241,12 @@ nv.models.mtMultiBarChart = function() {
           var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
 
           xTicks
+              .selectAll('.tick text')
+              .attr('class', function(d,i) {
+                return 'month-number-'+i;
+              })
+
+          xTicks
               .selectAll('line, text')
               .style('opacity', 1)
 

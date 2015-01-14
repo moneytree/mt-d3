@@ -3,7 +3,7 @@
 var nv = window.nv || {};
 
 
-nv.version = '1.1.200';
+nv.version = '1.1.210';
 nv.dev = true //set false when in production
 
 window.nv = nv;
@@ -8317,6 +8317,12 @@ nv.models.mtMultiBarChart = function() {
               .call(xAxis);
 
           var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
+
+          xTicks
+              .selectAll('.tick text')
+              .attr('class', function(d,i) {
+                return 'month-number-'+i;
+              })
 
           xTicks
               .selectAll('line, text')

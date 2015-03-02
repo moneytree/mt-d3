@@ -367,8 +367,8 @@ nv.models.axis = function() {
   }
 
   chart.hideYAxisMax = function(_) {
-    if (!arguments.length) return showMaxMin;
-    showMaxMin = _;
+    if (!arguments.length) return hideYAxisMax;
+    hideYAxisMax = _;
     return chart;
   }
 

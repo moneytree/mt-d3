@@ -53,6 +53,7 @@ nv.models.mtMultiBarChart = function() {
   yAxis
     .orient((rightAlignYAxis) ? 'right' : 'left')
     .tickFormat(d3.format(',.1f'))
+    .hideYAxisMax(hideYAxisMax)
     ;
 
   controls.updateState(false);

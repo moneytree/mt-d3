@@ -1385,8 +1385,8 @@ nv.utils.optionsFunc = function(args) {
   }
 
   chart.hideYAxisMax = function(_) {
-    if (!arguments.length) return showMaxMin;
-    showMaxMin = _;
+    if (!arguments.length) return hideYAxisMax;
+    hideYAxisMax = _;
     return chart;
   }
 
@@ -8144,6 +8144,7 @@ nv.models.mtMultiBarChart = function() {
   yAxis
     .orient((rightAlignYAxis) ? 'right' : 'left')
     .tickFormat(d3.format(',.1f'))
+    .hideYAxisMax(hideYAxisMax)
     ;
 
   controls.updateState(false);

@@ -8334,13 +8334,9 @@ nv.models.mtMultiBarChart = function() {
           var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
 
           xTicks
-              .selectAll('.tick text')
+              .select('.tick text')
               .attr('class', function(d,i, j) {
-                // It selects tons of groups. We only want to set it to the first group which is the labels
-                if(j == 0){
-                  return 'month-number-'+i;
-                }
-
+                return 'month-number-'+i;
               })
 
           xTicks

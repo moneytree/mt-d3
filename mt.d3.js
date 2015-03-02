@@ -3,8 +3,8 @@
 var nv = window.nv || {};
 
 
-nv.version = '1.1.210';
-nv.dev = true //set false when in production
+nv.version = '1.1.310';
+nv.dev = false //set false when in production
 
 window.nv = nv;
 
@@ -1031,6 +1031,7 @@ nv.utils.optionsFunc = function(args) {
     , scale = d3.scale.linear()
     , axisLabelText = null
     , showMaxMin = true //TODO: showMaxMin should be disabled on all ordinal scaled axes
+    , hideYAxisMax = false
     , highlightZero = true
     , rotateLabels = 0
     , rotateYLabel = true
@@ -1233,7 +1234,13 @@ nv.utils.optionsFunc = function(args) {
               .attr('x', rotateYLabel ? (-scale.range()[0] / 2) : -axis.tickPadding());
           if (showMaxMin) {
             var axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
-                           .data(scale.domain());
+                           .data(function() {
+                              if(hideYAxisMax) {
+                                return scale.domain().splice(0, 1);
+                              } else {
+                                return scale.domain();
+                              }
+                           });
             axisMaxMin.enter().append('g').attr('class', 'nv-axisMaxMin').append('text')
                 .style('opacity', 0);
             axisMaxMin.exit().remove();
@@ -1372,6 +1379,12 @@ nv.utils.optionsFunc = function(args) {
   }
 
   chart.showMaxMin = function(_) {
+    if (!arguments.length) return showMaxMin;
+    showMaxMin = _;
+    return chart;
+  }
+
+  chart.hideYAxisMax = function(_) {
     if (!arguments.length) return showMaxMin;
     showMaxMin = _;
     return chart;
@@ -7804,10 +7817,10 @@ nv.models.mtMultiBar = function() {
 
       var barsEnter = bars.enter().append('path')
           .attr('d', function(d,i,j) {
-            var xPosition = barWidth/2;
+            var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
             var yPosition = y0(stacked ? d.y0 : 0);
             var heightOfBar = 0;
-            var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
+            var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
 
             return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
           })
@@ -7885,11 +7898,11 @@ nv.models.mtMultiBar = function() {
                   return i * delay / data[0].values.length;
             })
             .attr('d', function(d,i,j) {
-              var xPosition = barWidth/2;
+              var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
               var yPosition = y((stacked ? d.y1 : 0));
               var heightOfBar = Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
 
-              var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
+              var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
               return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
             });
       else
@@ -7898,7 +7911,7 @@ nv.models.mtMultiBar = function() {
                 return i * delay/ data[0].values.length;
             })
             .attr('d', function(d,i,j) {
-              var xPosition = barWidth/2;
+              var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
               var heightOfBar = Math.max(Math.abs(y(getY(d,i)) - y(0)),1) || 0;
               var yPosition = getY(d,i) < 0 ?
                           y(0) :
@@ -7906,7 +7919,7 @@ nv.models.mtMultiBar = function() {
                           y(0) - 1 :
                           y(getY(d,i)) || 0;
 
-              var widthOfBar = barWidth || (x.rangeBand() / (stacked ? 1 : data.length));
+              var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
               return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
             });
 
@@ -8099,6 +8112,7 @@ nv.models.mtMultiBarChart = function() {
     , showXAxis = true
     , showYAxis = true
     , rightAlignYAxis = false
+    , hideYAxisMax = true
     , reduceXTicks = true // if false a tick will show for every data point
     , staggerLabels = false
     , rotateLabels = 0
@@ -8370,7 +8384,7 @@ nv.models.mtMultiBarChart = function() {
       if (showYAxis) {      
           yAxis
             .scale(y)
-            .ticks( availableHeight / 36 )
+            .ticks( availableHeight / (36 * 3) ) // This was originall 36, but multiplying it by 4 lessened it the major ticks
             .tickSize( -availableWidth, 0);
 
           g.select('.nv-y.nv-axis').transition()
@@ -8538,6 +8552,13 @@ nv.models.mtMultiBarChart = function() {
     if(!arguments.length) return rightAlignYAxis;
     rightAlignYAxis = _;
     yAxis.orient( (_) ? 'right' : 'left');
+    return chart;
+  };
+
+  chart.hideYAxisMax = function(_) {
+    if(!arguments.length) return hideYAxisMax;
+    hideYAxisMax = _
+    yAxis.hideYAxisMax( _ );
     return chart;
   };
 

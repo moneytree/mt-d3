@@ -21,6 +21,7 @@ nv.models.mtMultiBarChart = function() {
     , showXAxis = true
     , showYAxis = true
     , rightAlignYAxis = false
+    , hideYAxisMax = true
     , reduceXTicks = true // if false a tick will show for every data point
     , staggerLabels = false
     , rotateLabels = 0
@@ -460,6 +461,13 @@ nv.models.mtMultiBarChart = function() {
     if(!arguments.length) return rightAlignYAxis;
     rightAlignYAxis = _;
     yAxis.orient( (_) ? 'right' : 'left');
+    return chart;
+  };
+
+  chart.hideYAxisMax = function(_) {
+    if(!arguments.length) return hideYAxisMax;
+    hideYAxisMax = _
+    yAxis.hideYAxisMax( _ );
     return chart;
   };
 

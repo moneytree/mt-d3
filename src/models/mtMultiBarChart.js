@@ -244,8 +244,12 @@ nv.models.mtMultiBarChart = function() {
 
           xTicks
               .selectAll('.tick text')
-              .attr('class', function(d,i) {
-                return 'month-number-'+i;
+              .attr('class', function(d,i, j) {
+                // It selects tons of groups. We only want to set it to the first group which is the labels
+                if(j == 0){
+                  return 'month-number-'+i;
+                }
+
               })
 
           xTicks

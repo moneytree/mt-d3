@@ -292,7 +292,7 @@ nv.models.mtMultiBarChart = function() {
       if (showYAxis) {      
           yAxis
             .scale(y)
-            .ticks( availableHeight / 36 )
+            .ticks( availableHeight / (36 * 3) ) // This was originall 36, but multiplying it by 4 lessened it the major ticks
             .tickSize( -availableWidth, 0);
 
           g.select('.nv-y.nv-axis').transition()

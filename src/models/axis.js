@@ -13,6 +13,7 @@ nv.models.axis = function() {
     , scale = d3.scale.linear()
     , axisLabelText = null
     , showMaxMin = true //TODO: showMaxMin should be disabled on all ordinal scaled axes
+    , hideYAxisMax = false
     , highlightZero = true
     , rotateLabels = 0
     , rotateYLabel = true
@@ -215,7 +216,13 @@ nv.models.axis = function() {
               .attr('x', rotateYLabel ? (-scale.range()[0] / 2) : -axis.tickPadding());
           if (showMaxMin) {
             var axisMaxMin = wrap.selectAll('g.nv-axisMaxMin')
-                           .data(scale.domain());
+                           .data(function() {
+                              if(hideYAxisMax) {
+                                return scale.domain().splice(0, 1);
+                              } else {
+                                return scale.domain();
+                              }
+                           });
             axisMaxMin.enter().append('g').attr('class', 'nv-axisMaxMin').append('text')
                 .style('opacity', 0);
             axisMaxMin.exit().remove();
@@ -354,6 +361,12 @@ nv.models.axis = function() {
   }
 
   chart.showMaxMin = function(_) {
+    if (!arguments.length) return showMaxMin;
+    showMaxMin = _;
+    return chart;
+  }
+
+  chart.hideYAxisMax = function(_) {
     if (!arguments.length) return showMaxMin;
     showMaxMin = _;
     return chart;

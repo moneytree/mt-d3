@@ -50,6 +50,11 @@ nv.models.mtMultiBar = function() {
 
 
   function chart(selection) {
+
+    function getHeightOfBar(d, i, j) {
+      return Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))), 1);
+    }
+
     function roundedBars(x, y, width, height, radius, value) {
       if( value < 0 ) {
         return roundedBottomRectangle(x, y, width, height, radius)
@@ -337,7 +342,16 @@ nv.models.mtMultiBar = function() {
             d3.event.stopPropagation();
           });
       bars
-          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
+          .attr('class', function(d,i,j) {
+            var classes = 'nv-bar';
+            var height = getHeightOfBar(d,i,j);
+            // Rounded top bars have leave behind this residue of pathing when the height is at 0-1, so we can add a class
+            // and let the caller deal with it.
+            if(height == 1 || height == 0) {
+              classes += ' transparent'
+            }
+            return getY(d,i) < 0 ? (classes + ' negative') : (classes + ' positive')
+          })
           .transition()
           .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
 
@@ -358,7 +372,7 @@ nv.models.mtMultiBar = function() {
             .attr('d', function(d,i,j) {
               var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
               var yPosition = y((stacked ? d.y1 : 0));
-              var heightOfBar = Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))),1);
+              var heightOfBar = getHeightOfBar(d,i,j);
 
               var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
               return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
@@ -370,7 +384,7 @@ nv.models.mtMultiBar = function() {
             })
             .attr('d', function(d,i,j) {
               var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
-              var heightOfBar = Math.max(Math.abs(y(getY(d,i)) - y(0)),1) || 0;
+              var heightOfBar = getHeightOfBar(d,i,j);
               var yPosition = getY(d,i) < 0 ?
                           y(0) :
                           y(0) - y(getY(d,i)) < 1 ?

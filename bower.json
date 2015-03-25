@@ -1,6 +1,6 @@
 {
   "name": "mt-d3",
-  "version": "1.1.310",
+  "version": "1.1.320",
   "description": "nvd3 re-purposed for Moneytree",
   "main": ["mt.d3.js", "mt.d3.css"],
   "keywords": [

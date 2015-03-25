@@ -29,17 +29,17 @@ text {
 <body>
 
   <div id="chart1" class='with-3d-shadow with-transitions'>
-    <svg></svg>
+    <svg style="width: 100%; height: 500px;"></svg>
   </div>
 
 <script src="../lib/d3.v3.js"></script>
-<script src="../nv.d3.js"></script>
+<script src="../mt.d3.js"></script>
 <script src="../src/tooltip.js"></script>
 <script src="../src/utils.js"></script>
 <script src="../src/models/legend.js"></script>
 <script src="../src/models/axis.js"></script>
-<script src="../src/models/multiBar.js"></script>
-<script src="../src/models/multiBarChart.js"></script>
+<script src="../src/models/mtMultiBar.js"></script>
+<script src="../src/models/mtMultiBarChart.js"></script>
 <script src="stream_layers.js"></script>
 <script>
 
@@ -66,12 +66,11 @@ var negative_test_data = new d3.range(0,3).map(function(d,i) { return {
 
 var chart;
 nv.addGraph(function() {
-    chart = nv.models.multiBarChart()
+    chart = nv.models.mtMultiBarChart()
       .barColor(d3.scale.category20().range())
       .margin({bottom: 100})
       .transitionDuration(300)
       .delay(0)
-      .rotateLabels(45)
       .groupSpacing(0.1)
       ;
 
@@ -89,8 +88,8 @@ nv.addGraph(function() {
         .tickFormat(d3.format(',.1f'));
 
     d3.select('#chart1 svg')
-        .datum(negative_test_data)
-       .call(chart);
+      .datum(negative_test_data)
+      .call(chart);
 
     nv.utils.windowResize(chart.update);
 

@@ -1,4 +1,3 @@
-
 nv.models.mtMultiBarChart = function() {
   "use strict";
   //============================================================
@@ -245,7 +244,7 @@ nv.models.mtMultiBarChart = function() {
           xTicks
               .select('.tick text')
               .attr('class', function(d,i, j) {
-                return 'month-number-'+i;
+                return 'x-tick-text-index-'+i;
               })
 
           xTicks
@@ -261,7 +260,7 @@ nv.models.mtMultiBarChart = function() {
               // Issue #140
               xTicks
                 .selectAll("text")
-                .attr('transform', function(d,i,j) { 
+                .attr('transform', function(d,i,j) {
                     return  getTranslate(0, (j % 2 == 0 ? staggerUp : staggerDown));
                   });
 
@@ -285,13 +284,13 @@ nv.models.mtMultiBarChart = function() {
               .selectAll('.tick text')
               .attr('transform', 'rotate(' + rotateLabels + ' 0,0)')
               .style('text-anchor', rotateLabels > 0 ? 'start' : 'end');
-          
+
           g.select('.nv-x.nv-axis').selectAll('g.nv-axisMaxMin text')
               .style('opacity', 1);
       }
 
 
-      if (showYAxis) {      
+      if (showYAxis) {
           yAxis
             .scale(y)
             .ticks( availableHeight / (36 * 3) ) // This was originall 36, but multiplying it by 4 lessened it the major ticks
@@ -310,7 +309,7 @@ nv.models.mtMultiBarChart = function() {
       // Event Handling/Dispatching (in chart's scope)
       //------------------------------------------------------------
 
-      legend.dispatch.on('stateChange', function(newState) { 
+      legend.dispatch.on('stateChange', function(newState) {
         state = newState;
         dispatch.stateChange(state);
         chart.update();
@@ -405,7 +404,7 @@ nv.models.mtMultiBarChart = function() {
    'id', 'stacked', 'stackOffset', 'delay', 'barColor','groupSpacing' ,'barWidth');
 
   chart.options = nv.utils.optionsFunc.bind(chart);
-  
+
   chart.margin = function(_) {
     if (!arguments.length) return margin;
     margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
@@ -519,7 +518,7 @@ nv.models.mtMultiBarChart = function() {
     defaultState = _;
     return chart;
   };
-  
+
   chart.noData = function(_) {
     if (!arguments.length) return noData;
     noData = _;

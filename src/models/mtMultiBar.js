@@ -1,7 +1,7 @@
 /*
   Rounded top bars.
-  This chart was written by me (Douglas Mak @dagumak) for Moneytree's web application Dec 31 2014 to January 1st 2015. 
-  It uses svg pathing to creaating a rounded top bar, and then is hooked into the nvd3's existing charting. 
+  This chart was written by me (Douglas Mak @dagumak) for Moneytree's web application Dec 31 2014 to January 1st 2015.
+  It uses svg pathing to creaating a rounded top bar, and then is hooked into the nvd3's existing charting.
 */
 
 nv.models.mtMultiBar = function() {
@@ -166,7 +166,7 @@ nv.models.mtMultiBar = function() {
 
       y   .domain((function() {
               var minAndMax = d3.extent(
-              d3.merge(seriesData).map(function(d) { 
+              d3.merge(seriesData).map(function(d) {
                   return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y
                 }).concat(forceY)
               )
@@ -254,33 +254,31 @@ nv.models.mtMultiBar = function() {
 
       barsActiveState.exit().remove();
 
+      var activeStateBarWidth = barWidth*4;
+      var xPositionForErrthang = 0;
+
       var barsActiveStateEnter = barsActiveState.enter().append('rect')
-          .attr('class', function(d,i) { return "nv-active-bar month-number-"+d.x })
-          .attr('x', function(d,i,j) { return 0 - barWidth })
+          .attr('class', function(d,i) { return "nv-active-bar active-bar-index-"+i })
+          .attr('x', function(d,i,j) { return xPositionForErrthang; })
           .attr('y', 0)
           .attr('height', height )
-          .attr('width', function() {
-            var width = barWidth*4;
-            return width
-
-          })
-          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
+          .attr('width', function() { return activeStateBarWidth; })
           .style('fill', '#DFDFDF')
           .style('stroke', '#DFDFDF')
           .style('opacity', '0');
 
       barsActiveState
           .transition()
-          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
+          .attr('transform', function(d,i) { return 'translate(' + (x(getX(d,i))) + ',0)'; })
 
       var bars = groups.selectAll('path.nv-bar')
-          .data(function(d) { return (hideable && !data.length) ? hideable.values : d.values });
+          .data(function(d,i) { return (hideable && !data.length) ? hideable.values : d.values });
 
       bars.exit().remove();
 
       var barsEnter = bars.enter().append('path')
           .attr('d', function(d,i,j) {
-            var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
+            var xPosition = xPositionForErrthang;
             var yPosition = y0(stacked ? d.y0 : 0);
             var heightOfBar = 0;
             var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
@@ -290,7 +288,7 @@ nv.models.mtMultiBar = function() {
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
           .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; })
           ;
-     
+
       bars
           .style('fill', function(d,i,j){ return color(d, j, i);  })
           .style('stroke', function(d,i,j){ return color(d, j, i); })
@@ -364,13 +362,14 @@ nv.models.mtMultiBar = function() {
 
 
       if (stacked)
-          bars.transition()
+          bars
+            .transition()
             .delay(function(d,i) {
 
                   return i * delay / data[0].values.length;
             })
             .attr('d', function(d,i,j) {
-              var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
+              var xPosition = x.rangeBand()/2;
               var yPosition = y((stacked ? d.y1 : 0));
               var heightOfBar = getHeightOfBar(d,i,j);
 
@@ -378,12 +377,13 @@ nv.models.mtMultiBar = function() {
               return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
             });
       else
-          bars.transition()
+          bars
+            .transition()
             .delay(function(d,i) {
                 return i * delay/ data[0].values.length;
             })
             .attr('d', function(d,i,j) {
-              var xPosition = (x.rangeBand()/2) - ((barWidth/2) || 0);
+              var xPosition = xPositionForErrthang + barWidth*1.5; // This allows it to be always centered relative to the active bar
               var heightOfBar = getHeightOfBar(d,i,j);
               var yPosition = getY(d,i) < 0 ?
                           y(0) :

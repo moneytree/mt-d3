@@ -1,3 +1,7 @@
+/*
+  Moneytree multi bar charts
+*/
+
 nv.models.mtMultiBarChart = function() {
   "use strict";
   //============================================================
@@ -536,3 +540,4 @@ nv.models.mtMultiBarChart = function() {
 
   return chart;
 }
+

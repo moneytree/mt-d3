@@ -3798,7 +3798,7 @@ nv.models.mtMultiBar = function() {
       var xPositionForErrthang = 0;
 
       var barsActiveStateEnter = barsActiveState.enter().append('rect')
-          .attr('class', function(d,i) { return "nv-active-bar month-number-"+d.x })
+          .attr('class', function(d,i) { return "nv-active-bar active-bar-index-"+i })
           .attr('x', function(d,i,j) { return xPositionForErrthang; })
           .attr('y', 0)
           .attr('height', height )

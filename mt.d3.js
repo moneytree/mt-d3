@@ -3821,7 +3821,7 @@ nv.models.mtMultiBar = function() {
             var xPosition = xPositionForErrthang;
             var yPosition = y0(stacked ? d.y0 : 0);
             var heightOfBar = 0;
-            var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
+            var widthOfBar = ((barWidth || (x.rangeBand()) / (stacked ? 1 : data.length)));
 
             return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
           })
@@ -3913,7 +3913,7 @@ nv.models.mtMultiBar = function() {
               var yPosition = y((stacked ? d.y1 : 0));
               var heightOfBar = getHeightOfBar(d,i,j);
 
-              var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
+              var widthOfBar = ((barWidth || (x.rangeBand()) / (stacked ? 1 : data.length)));
               return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
             });
       else
@@ -3931,7 +3931,7 @@ nv.models.mtMultiBar = function() {
                           y(0) - 1 :
                           y(getY(d,i)) || 0;
 
-              var widthOfBar = ((barWidth || x.rangeBand()) / (stacked ? 1 : data.length));
+              var widthOfBar = ((barWidth || (x.rangeBand()) / (stacked ? 1 : data.length)));
               return roundedBars(xPosition, yPosition, widthOfBar, heightOfBar, widthOfBar/2, getY(d,i));
             });
 

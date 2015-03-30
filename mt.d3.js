@@ -3795,7 +3795,7 @@ nv.models.mtMultiBar = function() {
       barsActiveState.exit().remove();
 
       var activeStateBarWidth = barWidth*4;
-      var xPositionForErrthang = 0;
+      var xPositionForErrthang = (x.rangeBand()/2) - ((barWidth/2) || 0) - (barWidth*1.5);
 
       var barsActiveStateEnter = barsActiveState.enter().append('rect')
           .attr('class', function(d,i) { return "nv-active-bar active-bar-index-"+i })

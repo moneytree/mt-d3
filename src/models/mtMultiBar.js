@@ -172,8 +172,8 @@ nv.models.mtMultiBar = function() {
               )
 
               verticallyCenterZero(minAndMax); // This will center the 0 axis when both postive and negative exist
-              minAndMax[0] *= 1.4; // This is to help keep a gap on the top of the graph
-              minAndMax[1] *= 1.4; // This is to help keep a gap on the top of the graph
+              minAndMax[0] *= 1.8; // This is to help keep a gap on the top of the graph
+              minAndMax[1] *= 1.8; // This is to help keep a gap on the top of the graph
               return minAndMax;
             })()
           )
